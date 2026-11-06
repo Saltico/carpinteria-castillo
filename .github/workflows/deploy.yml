@@ -1,0 +1,52 @@
+# .github/workflows/deploy.yml
+# Build Astro static site and deploy to GitHub Pages (gh-pages branch).
+# PUBLIC_SITE_URL must match the Pages URL; base path is set in astro.config.mjs.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        env:
+          PUBLIC_SITE_URL: https://saltico.github.io
+          PUBLIC_SITE_LANG: es
+          PUBLIC_I18N_LOCALES: es,en
+          PUBLIC_CONTACT_EMAIL: matiicasper@gmail.com
+          PUBLIC_CONTACT_PHONE: "+56965593202"
+          PUBLIC_WHATSAPP_URL: https://wa.me/56965593202
+          ASTRO_ENABLE_KEYSTATIC: "false"
+        run: npm run build
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          # Keep .nojekyll so GitHub serves files as-is (no Jekyll processing)
+          enable_jekyll: false

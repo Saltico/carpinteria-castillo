@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /keystatic/
+Sitemap: https://saltico.github.io/carpinteria-castillo/sitemap-index.xml
