@@ -1,0 +1,147 @@
+---
+// src/components/ui/LanguageSwitcher.astro
+// Switcher de idioma para sitios i18n.
+// Removible cuando features.i18n.enabled === false en site-spec.json.
+// Usa las rutas i18n de Astro (locale-prefixed routes).
+
+export interface Props {
+  locales: { code: string; label: string; url: string }[];
+  currentLocale?: string;
+  ariaLabel?: string;
+}
+
+const { locales, currentLocale, ariaLabel = 'Language selector' } = Astro.props;
+---
+
+{locales.length > 1 && (
+  <nav class="lang-switcher" aria-label={ariaLabel}>
+    <button
+      type="button"
+      class="lang-switcher__btn"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      data-lang-toggle
+    >
+      <span class="lang-switcher__current">
+        {locales.find(l => l.code === currentLocale)?.label ?? locales[0].label}
+      </span>
+      <svg class="lang-switcher__chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </button>
+    <ul class="lang-switcher__menu" role="listbox" data-lang-menu>
+      {locales.map((locale) => (
+        <li role="option" aria-selected={locale.code === currentLocale}>
+          <a
+            href={locale.url}
+            class:list={['lang-switcher__link', locale.code === currentLocale && 'lang-switcher__link--active']}
+            hreflang={locale.code}
+          >
+            {locale.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<style>
+  .lang-switcher {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .lang-switcher__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.625rem;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    color: var(--color-ink);
+    font-size: var(--text-small);
+    font-family: var(--font-body);
+    transition: all 0.2s var(--ease-out);
+  }
+
+  .lang-switcher__btn:hover {
+    background-color: var(--color-surface-alt);
+    border-color: var(--color-ink-500);
+  }
+
+  .lang-switcher__btn[aria-expanded='true'] + .lang-switcher__menu {
+    display: block;
+  }
+
+  .lang-switcher__chevron {
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .lang-switcher__btn[aria-expanded='true'] .lang-switcher__chevron {
+    transform: rotate(180deg);
+  }
+
+  .lang-switcher__menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    right: 0;
+    min-width: 8rem;
+    padding: 0.25rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    z-index: 200;
+  }
+
+  .lang-switcher__link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+    text-decoration: none;
+    font-size: var(--text-small);
+    transition: background-color 0.15s var(--ease-out);
+  }
+
+  .lang-switcher__link:hover {
+    background-color: var(--color-surface-alt);
+  }
+
+  .lang-switcher__link--active {
+    font-weight: 600;
+    color: var(--color-brand);
+  }
+</style>
+
+<script>
+  (function () {
+    if (typeof window === 'undefined') return;
+
+    const toggle = document.querySelector<HTMLButtonElement>('[data-lang-toggle]');
+    const menu = document.querySelector<HTMLElement>('[data-lang-menu]');
+    if (!toggle || !menu) return;
+
+    toggle.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!toggle.contains(e.target as Node) && !menu.contains(e.target as Node)) {
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
+</script>

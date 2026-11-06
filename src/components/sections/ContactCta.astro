@@ -1,0 +1,118 @@
+---
+// src/components/sections/ContactCta.astro
+// Home: banda CTA de contacto (site-spec.json → contact-cta) con accesos
+// directos a WhatsApp y email (datos desde env vars, nunca hardcodeados).
+
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { homeContent } from '@/i18n/content';
+import { ui, localePath, type Locale } from '@/i18n/ui';
+import { siteContact } from '@/data/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = homeContent[locale].contactCta;
+const channels = ui[locale].channels;
+
+const phoneHref = siteContact.phone ? `tel:${siteContact.phone.replace(/\s/g, '')}` : '';
+---
+
+<SectionLayout background="dark" spacing="lg" class="contact-cta">
+  <Container size="md">
+    <div class="contact-cta__inner reveal">
+      <h2 class="contact-cta__title">{t.title}</h2>
+      <p class="contact-cta__description">{t.description}</p>
+
+      <div class="contact-cta__actions">
+        <Button variant="primary" size="lg" href={localePath(t.cta.routeKey, locale)}>
+          {t.cta.label}
+        </Button>
+        <div class="contact-cta__quick">
+          {
+            siteContact.whatsappUrl && (
+              <a class="contact-cta__link" href={siteContact.whatsappUrl} target="_blank" rel="noopener">
+                <Icon name="whatsapp" size={18} />
+                {channels.whatsapp}
+              </a>
+            )
+          }
+          {
+            siteContact.email && (
+              <a class="contact-cta__link" href={`mailto:${siteContact.email}`}>
+                <Icon name="email" size={18} />
+                {channels.email}
+              </a>
+            )
+          }
+          {
+            phoneHref && (
+              <a class="contact-cta__link" href={phoneHref}>
+                <Icon name="phone" size={18} />
+                {siteContact.phone}
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </Container>
+</SectionLayout>
+
+<style>
+  .contact-cta__inner {
+    text-align: center;
+    max-width: 640px;
+    margin-inline: auto;
+  }
+
+  .contact-cta__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 800;
+    color: var(--color-on-dark);
+    margin-bottom: var(--spacing-4);
+    text-wrap: balance;
+  }
+
+  .contact-cta__description {
+    font-size: var(--text-lead);
+    color: var(--color-on-dark-muted);
+    margin-bottom: var(--spacing-8);
+    text-wrap: balance;
+  }
+
+  .contact-cta__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-6);
+  }
+
+  .contact-cta__quick {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-6);
+  }
+
+  .contact-cta__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-on-dark-muted);
+    text-decoration: none;
+    transition: color 0.2s var(--ease-out);
+  }
+
+  .contact-cta__link:hover,
+  .contact-cta__link:focus-visible {
+    color: var(--color-on-dark);
+  }
+</style>

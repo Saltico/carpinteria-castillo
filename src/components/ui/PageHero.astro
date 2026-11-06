@@ -1,0 +1,67 @@
+---
+// src/components/ui/PageHero.astro
+// Simpler page hero for inner pages (no background media, solid color)
+
+export interface Props {
+  title: string;
+  description?: string;
+  background?: 'default' | 'dark';
+}
+
+const { title, description, background = 'default' } = Astro.props;
+
+const bgClass = background === 'dark' ? 'page-hero--dark' : '';
+---
+
+<section class:list={['page-hero', bgClass]}>
+  <div class="page-hero__inner">
+    <h1 class="page-hero__title">{title}</h1>
+    {description && <p class="page-hero__description">{description}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    padding-block: var(--spacing-16);
+    background-color: var(--color-surface-alt);
+    text-align: center;
+  }
+
+  .page-hero--dark {
+    background-color: var(--color-graphite);
+    color: var(--color-on-dark);
+  }
+
+  .page-hero__inner {
+    max-width: var(--breakpoint-lg);
+    margin-inline: auto;
+    padding-inline: var(--spacing-4);
+  }
+
+  @media (min-width: 768px) {
+    .page-hero__inner {
+      padding-inline: var(--spacing-8);
+    }
+  }
+
+  .page-hero__title {
+    font-size: var(--text-h1);
+    margin-bottom: var(--spacing-4);
+  }
+
+  .page-hero--dark .page-hero__title {
+    color: var(--color-on-dark);
+  }
+
+  .page-hero__description {
+    font-size: var(--text-lead);
+    max-width: 600px;
+    margin-inline: auto;
+    color: var(--color-ink-700);
+  }
+
+  .page-hero--dark .page-hero__description {
+    color: var(--color-on-dark-muted);
+  }
+</style>

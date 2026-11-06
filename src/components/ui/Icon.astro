@@ -1,0 +1,36 @@
+---
+// src/components/ui/Icon.astro
+// Inline SVG icon renderer from icon map
+import { iconMap, type IconName } from '@/lib/icons';
+
+export interface Props {
+  name: IconName;
+  size?: number | string;
+  class?: string;
+}
+
+const { name, size = 24, class: className } = Astro.props;
+const svg = iconMap[name];
+---
+
+{svg && (
+  <span
+    class:list={['icon', className]}
+    style={`width: ${typeof size === 'number' ? `${size}px` : size}; height: ${typeof size === 'number' ? `${size}px` : size};`}
+    set:html={svg}
+  />
+)}
+
+<style>
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .icon :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+</style>

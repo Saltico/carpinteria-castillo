@@ -1,0 +1,154 @@
+---
+// src/components/analytics/ConsentBanner.astro
+// Cookie consent banner with Consent Mode v2 support
+// Stores preference in localStorage and updates dataLayer
+
+import Icon from '@/components/ui/Icon.astro';
+---
+
+<div class="consent-banner" data-consent-banner hidden>
+  <div class="consent-banner__inner">
+    <p class="consent-banner__text">
+      We use cookies to improve your experience. By continuing, you agree to our
+      <a href="/cookies">cookie policy</a>.
+    </p>
+    <div class="consent-banner__actions">
+      <button type="button" class="consent-banner__btn consent-banner__btn--secondary" data-consent-deny>
+        Decline
+      </button>
+      <button type="button" class="consent-banner__btn consent-banner__btn--primary" data-consent-accept>
+        Accept
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Set default consent state (all denied) before GTM loads
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    analytics_storage: 'denied',
+    wait_for_update: 500,
+  });
+
+  // Check stored preference
+  const stored = localStorage.getItem('consent-preference');
+  if (stored === 'accepted') {
+    gtag('consent', 'update', {
+      ad_storage: 'granted',
+      analytics_storage: 'granted',
+    });
+  } else if (stored === 'denied') {
+    // Already denied, no action needed
+  } else {
+    // No preference yet, show banner
+    const banner = document.querySelector('[data-consent-banner]');
+    if (banner) banner.hidden = false;
+  }
+
+  // Accept button
+  document.querySelector('[data-consent-accept]')?.addEventListener('click', () => {
+    gtag('consent', 'update', {
+      ad_storage: 'granted',
+      analytics_storage: 'granted',
+    });
+    localStorage.setItem('consent-preference', 'accepted');
+    document.querySelector('[data-consent-banner]')!.hidden = true;
+  });
+
+  // Deny button
+  document.querySelector('[data-consent-deny]')?.addEventListener('click', () => {
+    gtag('consent', 'update', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied',
+    });
+    localStorage.setItem('consent-preference', 'denied');
+    document.querySelector('[data-consent-banner]')!.hidden = true;
+  });
+</script>
+
+<style>
+  .consent-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: var(--color-graphite);
+    color: var(--color-on-dark);
+    padding: var(--spacing-4);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .consent-banner__inner {
+    max-width: var(--breakpoint-xl);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .consent-banner__inner {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  .consent-banner__text {
+    font-size: var(--text-small);
+    line-height: 1.5;
+    margin: 0;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .consent-banner__text {
+      text-align: left;
+      flex: 1;
+    }
+  }
+
+  .consent-banner__text a {
+    color: var(--color-on-dark);
+    text-decoration: underline;
+  }
+
+  .consent-banner__actions {
+    display: flex;
+    gap: var(--spacing-3);
+    flex-shrink: 0;
+  }
+
+  .consent-banner__btn {
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-size: var(--text-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out);
+    border: none;
+  }
+
+  .consent-banner__btn--primary {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  .consent-banner__btn--primary:hover {
+    background-color: var(--color-brand-600);
+  }
+
+  .consent-banner__btn--secondary {
+    background-color: transparent;
+    color: var(--color-on-dark);
+    border: 1.5px solid var(--color-on-dark);
+  }
+
+  .consent-banner__btn--secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+</style>

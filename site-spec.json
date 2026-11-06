@@ -1,0 +1,176 @@
+{
+  "$schema": "./site-spec.schema.json",
+  "meta": {
+    "clientName": "Carpintería Castillo",
+    "version": "0.1.0",
+    "createdAt": "2026-11-05T00:00:00.000Z",
+    "updatedAt": "2026-11-05T21:41:19.0187652Z",
+    "approvedAt": "2026-11-06T01:24:43.2558082Z"
+  },
+  "brand": {
+    "name": "Carpintería Castillo",
+    "tagline": "Muebles a medida con alma de madera",
+    "colors": {
+      "primary": "#8B5A2B",
+      "secondary": "#B08968",
+      "accent": "#D4A574",
+      "background": "#FAF6F1",
+      "text": "#2C1810"
+    },
+    "typography": {
+      "heading": "Playfair Display",
+      "body": "Inter"
+    },
+    "logo": {
+      "src": "/logo.svg",
+      "dark": "/logo-dark.svg"
+    }
+  },
+  "site": {
+    "language": "es",
+    "defaultTitle": "Carpintería Castillo | Muebles a medida, puertas y más",
+    "defaultDescription": "Carpintería artesanal: muebles a medida, puertas de madera maciza y restauración profesional. Calidad, diseño y calidez en cada proyecto que realizamos.",
+    "favicon": "/favicon.svg",
+    "social": {
+      "whatsapp": "https://wa.me/56965593202"
+    },
+    "contact": {
+      "email": "matiicasper@gmail.com",
+      "phone": "+56965593202"
+    }
+  },
+  "pages": [
+    {
+      "route": "/",
+      "title": "Carpintería Castillo | Muebles a medida en madera maciza",
+      "description": "Carpintería artesanal especializada en muebles a medida, puertas de madera maciza y restauración. Diseño, calidad y calidez en cada proyecto.",
+      "hero": {
+        "heading": "Muebles a medida con alma de madera",
+        "subheading": "Diseñamos y construimos piezas únicas que transforman tu espacio con la calidez de la madera noble.",
+        "cta": {
+          "label": "Conoce nuestros servicios",
+          "href": "/servicios"
+        },
+        "image": "/images/hero-placeholder.avif"
+      },
+      "sections": [
+        {
+          "type": "services-preview",
+          "title": "Nuestros servicios",
+          "items": [
+            { "title": "Muebles a medida", "description": "Diseño y fabricación de muebles personalizados para cada espacio.", "icon": "cabinet" },
+            { "title": "Puertas", "description": "Puertas de madera maciza con terminaciones de alta calidad.", "icon": "door" },
+            { "title": "Restauración", "description": "Devolvemos la vida a piezas antiguas respetando su esencia.", "icon": "restore" }
+          ]
+        },
+        {
+          "type": "projects-preview",
+          "title": "Proyectos recientes",
+          "count": 6,
+          "cta": { "label": "Ver galería completa", "href": "/proyectos" }
+        },
+        {
+          "type": "contact-cta",
+          "title": "¿Tienes un proyecto en mente?",
+          "description": "Conversemos. Te asesoramos sin compromiso.",
+          "cta": { "label": "Contáctanos", "href": "/contacto" }
+        }
+      ]
+    },
+    {
+      "route": "/servicios",
+      "title": "Servicios de Carpintería | Muebles, Puertas y Restauración",
+      "description": "Servicios de carpintería: muebles a medida diseñados a tu espacio, puertas de madera maciza con terminaciones de calidad y restauración de piezas antiguas.",
+      "hero": {
+        "heading": "Servicios",
+        "subheading": "Tres especialidades, un mismo compromiso: la excelencia en madera.",
+        "image": "/images/services-hero-placeholder.avif"
+      },
+      "sections": [
+        {
+          "type": "service-detail",
+          "id": "muebles-a-medida",
+          "title": "Muebles a medida",
+          "description": "Diseñamos y fabricamos muebles únicos adaptados a tu espacio, necesidades y estilo. Desde bibliotecas y closets hasta comedores y escritorios, cada pieza se construye con maderas seleccionadas y terminaciones de alta calidad.",
+          "features": ["Diseño personalizado", "Maderas nobles seleccionadas", "Terminaciones a elección", "Entrega e instalación"]
+        },
+        {
+          "type": "service-detail",
+          "id": "puertas",
+          "title": "Puertas",
+          "description": "Fabricamos puertas de madera maciza y semimaciza con diseños clásicos y contemporáneos. Cada puerta se construye con precisión para garantizar durabilidad, aislamiento y estética.",
+          "features": ["Madera maciza y semimaciza", "Diseños clásicos y modernos", "Medidas exactas", "Herrajes de calidad"]
+        },
+        {
+          "type": "service-detail",
+          "id": "restauracion",
+          "title": "Restauración",
+          "description": "Devolvemos la vida a muebles y piezas antiguas con técnicas respetuosas que conservan su carácter y esencia. Restauramos con oficio para que cada pieza siga contando su historia.",
+          "features": ["Diagnóstico inicial", "Tratamiento de madera", "Reparación estructural", "Terminación fiel al original"]
+        }
+      ]
+    },
+    {
+      "route": "/proyectos",
+      "title": "Proyectos de Carpintería Castillo | Muebles y Puertas",
+      "description": "Galería de proyectos de carpintería: muebles a medida, puertas de madera maciza y restauraciones. Cada trabajo refleja oficio, dedicación y diseño.",
+      "hero": {
+        "heading": "Proyectos",
+        "subheading": "Una selección de trabajos que reflejan nuestro oficio.",
+        "image": "/images/projects-hero-placeholder.avif"
+      },
+      "sections": [
+        {
+          "type": "gallery",
+          "title": "Galería de trabajos",
+          "columns": 3,
+          "items": [
+            { "title": "Closet a medida", "category": "Muebles", "image": "/images/project-placeholder-01.avif" },
+            { "title": "Puerta de roble", "category": "Puertas", "image": "/images/project-placeholder-02.avif" },
+            { "title": "Mesa de comedor", "category": "Muebles", "image": "/images/project-placeholder-03.avif" },
+            { "title": "Restauración silla antigua", "category": "Restauración", "image": "/images/project-placeholder-04.avif" },
+            { "title": "Biblioteca empotrada", "category": "Muebles", "image": "/images/project-placeholder-05.avif" },
+            { "title": "Puerta de entrada", "category": "Puertas", "image": "/images/project-placeholder-06.avif" }
+          ]
+        }
+      ]
+    },
+    {
+      "route": "/contacto",
+      "title": "Contacto | Carpintería Castillo - Cotiza tu Proyecto",
+      "description": "Escríbenos por email o WhatsApp para cotizar tu proyecto de carpintería. Respondemos cada consulta de forma personalizada, clara y a la brevedad.",
+      "hero": {
+        "heading": "Contacto",
+        "subheading": "Cuéntanos tu idea. Te respondemos a la brevedad.",
+        "image": "/images/contact-hero-placeholder.avif"
+      },
+      "sections": [
+        {
+          "type": "contact-info",
+          "title": "Canal de contacto",
+          "channels": ["email", "phone", "whatsapp"],
+          "note": "Atendemos consultas de lunes a viernes. Responderemos tu mensaje a la brevedad."
+        }
+      ]
+    }
+  ],
+  "features": {
+    "has_contact_form": false,
+    "contact_channels": {
+      "email": true,
+      "phone": true,
+      "whatsapp": true,
+      "map": false
+    },
+    "dark_mode": true,
+    "i18n": {
+      "enabled": true,
+      "defaultLocale": "es",
+      "locales": ["es", "en"]
+    }
+  },
+  "seo": {
+    "defaultImage": "/images/og-default-placeholder.avif",
+    "robots": "index, follow"
+  }
+}

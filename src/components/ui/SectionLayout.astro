@@ -1,0 +1,62 @@
+---
+// src/components/ui/SectionLayout.astro
+// Reusable section wrapper with spacing and optional background
+
+export interface Props {
+  background?: 'default' | 'alt' | 'dark';
+  spacing?: 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const { background = 'default', spacing = 'lg', class: className } = Astro.props;
+
+const bgClasses = {
+  default: 'section--default',
+  alt: 'section--alt',
+  dark: 'section--dark',
+};
+
+const spacingClasses = {
+  sm: 'section--sm',
+  md: 'section--md',
+  lg: 'section--lg',
+};
+
+const bgClass = bgClasses[background];
+const spacingClass = spacingClasses[spacing];
+---
+
+<section class:list={['section', bgClass, spacingClass, className]}>
+  <slot />
+</section>
+
+<style>
+  .section {
+    padding-block: var(--spacing-16);
+  }
+
+  .section--sm {
+    padding-block: var(--spacing-8);
+  }
+
+  .section--md {
+    padding-block: var(--spacing-12);
+  }
+
+  .section--lg {
+    padding-block: var(--spacing-20);
+  }
+
+  .section--default {
+    background-color: var(--color-surface);
+  }
+
+  .section--alt {
+    background-color: var(--color-surface-alt);
+  }
+
+  .section--dark {
+    background-color: var(--color-graphite);
+    color: var(--color-on-dark);
+  }
+</style>

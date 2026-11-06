@@ -1,0 +1,61 @@
+---
+// src/pages/404.astro — 404 (locale es por defecto)
+// Metadatos (noindex): site.defaultTitle/defaultDescription del spec
+// aprobado (copy genérico, único frente a las 9 páginas). El contenido
+// visible conserva el copy UI del notFound (ui.es.notFound).
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import Button from '@/components/ui/Button.astro';
+import { ui, localePath } from '@/i18n/ui';
+import { siteDefaults } from '@/data/site';
+import { getSiteUrl } from '@/lib/seo';
+
+const t = ui.es.notFound;
+---
+
+<BaseLayout title={siteDefaults.title} description={siteDefaults.description} locale="es" canonical={getSiteUrl('/404')} noindex>
+  <SectionLayout background="default" spacing="lg">
+    <Container size="sm">
+      <div class="error-page">
+        <h1 class="error-page__code">404</h1>
+        <h2 class="error-page__title">{t.heading}</h2>
+        <p class="error-page__description">{t.description}</p>
+        <Button variant="primary" href={localePath('home', 'es')}>{t.backHome}</Button>
+      </div>
+    </Container>
+  </SectionLayout>
+</BaseLayout>
+
+<style>
+  .error-page {
+    text-align: center;
+    padding-block: var(--spacing-12);
+  }
+
+  .error-page__code {
+    font-family: var(--font-heading);
+    font-size: clamp(6rem, 15vw, 10rem);
+    font-weight: 900;
+    color: var(--color-brand);
+    line-height: 1;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .error-page__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 800;
+    margin-bottom: var(--spacing-4);
+    color: var(--color-ink);
+  }
+
+  .error-page__description {
+    font-size: var(--text-body);
+    color: var(--color-ink-700);
+    margin-bottom: var(--spacing-8);
+    max-width: 400px;
+    margin-inline: auto;
+    line-height: 1.6;
+  }
+</style>

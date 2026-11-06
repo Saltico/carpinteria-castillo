@@ -1,0 +1,131 @@
+/* src/styles/tokens.css */
+/* Design token system — Tailwind v4 CSS-first */
+/* @theme static forces emission of ALL variables into :root so scoped
+   component <style> blocks consuming var(--color-*) never lose tokens. */
+
+@import 'tailwindcss/theme';
+/* NOTE: 'tailwindcss' base (Preflight) is intentionally NOT imported;
+   a custom, less aggressive reset lives in base.css */
+
+/* ── Carpintería Castillo brand palette ──
+   primary   #8B5A2B  (madera noble)
+   secondary #B08968  (roble claro)
+   accent    #D4A574  (arce / destello)
+   bg        #FAF6F1  (crema cálido)
+   text      #2C1810  (espresso)          */
+
+@theme static {
+  /* Brand */
+  --color-brand: #8b5a2b;
+  --color-brand-600: #7a4e24;
+  --color-brand-700: #63401d;
+  --color-brand-050: #f3e8da;
+  --color-on-brand: #faf6f1;
+  --color-accent: #d4a574;
+  --color-accent-deep: #b08968;
+
+  /* Content ink */
+  --color-ink: #2c1810;
+  --color-ink-700: #4a3226;
+  --color-ink-500: #806a5c;
+
+  /* Surfaces */
+  --color-surface: #faf6f1;
+  --color-surface-alt: #f1e8dc;
+  --color-line: #e2d4c2;
+
+  /* Dark anchors (hero bands, dark sections) — espresso wood */
+  --color-graphite: #2c1810;
+  --color-graphite-2: #3f2a1d;
+  --color-on-dark: #faf6f1;
+  --color-on-dark-muted: #c7ac92;
+  --color-line-dark: rgba(250, 246, 241, 0.14);
+
+  /* States */
+  --color-danger: #b3261e;
+  --color-warning: #a86514;
+  --color-success: #3d6b35;
+
+  /* Typography: self-hosted variable fonts in public/fonts/ */
+  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  /* Fluid type scale */
+  --text-h1: clamp(2rem, 5vw, 3rem);
+  --text-h2: clamp(1.75rem, 3vw, 2.25rem);
+  --text-h3: clamp(1.375rem, 2.2vw, 1.75rem);
+  --text-h4: clamp(1.125rem, 1.8vw, 1.375rem);
+  --text-body: clamp(1rem, 0.4vw + 0.95rem, 1.125rem);
+  --text-small: 0.875rem;
+  --text-lead: clamp(1.125rem, 1.8vw, 1.375rem);
+
+  /* Spacing scale */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+
+  /* Radii */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-card: 0.875rem;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(44, 24, 16, 0.06);
+  --shadow-md: 0 4px 12px rgba(44, 24, 16, 0.1);
+  --shadow-lg: 0 8px 24px rgba(44, 24, 16, 0.16);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Breakpoints */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+}
+
+/* ── Dark theme overrides ── */
+:root[data-theme='dark'] {
+  /* Brand lightened for dark backgrounds */
+  --color-brand: #c79b6f;
+  --color-brand-600: #d4a574;
+  --color-brand-700: #e0b98c;
+  --color-brand-050: #3f2a1d;
+  --color-on-brand: #2c1810;
+
+  /* Content ink (inverted for dark) */
+  --color-ink: #f3e9dd;
+  --color-ink-700: #d9c6b2;
+  --color-ink-500: #a8907b;
+
+  /* Surfaces — warm espresso instead of slate */
+  --color-surface: #1e130b;
+  --color-surface-alt: #2a1b10;
+  --color-line: #4a3424;
+
+  /* Dark anchors deepen in dark mode */
+  --color-graphite: #171009;
+  --color-graphite-2: #241710;
+  --color-on-dark: #faf6f1;
+  --color-on-dark-muted: #c7ac92;
+  --color-line-dark: rgba(250, 246, 241, 0.12);
+
+  /* States brightened for dark */
+  --color-danger: #f26b5e;
+  --color-warning: #e9a23b;
+  --color-success: #7bc96f;
+
+  /* Shadows stronger in dark mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+}

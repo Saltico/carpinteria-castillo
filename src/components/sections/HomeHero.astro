@@ -1,0 +1,120 @@
+---
+// src/components/sections/HomeHero.astro
+// Hero principal del home: imagen full-bleed con overlay cálido,
+// eyebrow de marca, h1, subheading y CTA (site-spec.json → pages[0].hero).
+
+import { Image } from 'astro:assets';
+import Button from '@/components/ui/Button.astro';
+import { homeContent } from '@/i18n/content';
+import { localePath, type Locale } from '@/i18n/ui';
+import heroImg from '@/assets/images/hero-placeholder.webp';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = homeContent[locale].hero;
+---
+
+<section class="home-hero">
+  <Image
+    src={heroImg}
+    alt=""
+    widths={[640, 1024, 1440, 1920]}
+    sizes="100vw"
+    class="home-hero__media"
+    loading="eager"
+    decoding="async"
+    fetchpriority="high"
+  />
+  <div class="home-hero__overlay" aria-hidden="true"></div>
+
+  <div class="home-hero__content">
+    <p class="home-hero__eyebrow">{t.eyebrow}</p>
+    <h1 class="home-hero__title">{t.heading}</h1>
+    <p class="home-hero__sub">{t.subheading}</p>
+    <div class="home-hero__actions">
+      <Button variant="primary" size="lg" href={localePath(t.cta.routeKey, locale)}>
+        {t.cta.label}
+      </Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-hero {
+    position: relative;
+    min-height: min(88vh, 640px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .home-hero__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+
+  .home-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(44, 24, 16, 0.55),
+      rgba(44, 24, 16, 0.72)
+    );
+    z-index: -1;
+  }
+
+  .home-hero__content {
+    max-width: var(--breakpoint-lg);
+    margin-inline: auto;
+    padding-inline: var(--spacing-4);
+    padding-block: var(--spacing-20);
+    text-align: center;
+    color: var(--color-on-dark);
+  }
+
+  @media (min-width: 768px) {
+    .home-hero__content {
+      padding-inline: var(--spacing-8);
+    }
+  }
+
+  .home-hero__eyebrow {
+    display: inline-block;
+    font-size: var(--text-small);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-4);
+  }
+
+  .home-hero__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--color-on-dark);
+    margin-bottom: var(--spacing-6);
+    text-wrap: balance;
+  }
+
+  .home-hero__sub {
+    font-size: var(--text-lead);
+    line-height: 1.6;
+    max-width: 620px;
+    margin-inline: auto;
+    margin-bottom: var(--spacing-8);
+    color: rgba(250, 246, 241, 0.92);
+    text-wrap: balance;
+  }
+</style>

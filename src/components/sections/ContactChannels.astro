@@ -1,0 +1,184 @@
+---
+// src/components/sections/ContactChannels.astro
+// Página de contacto: canales email / teléfono / WhatsApp (site-spec.json
+// → contact-info). Sin formulario ni mapa (features.has_contact_form = false,
+// contact_channels.map = false). Datos desde env vars.
+
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { contactContent } from '@/i18n/content';
+import type { Locale } from '@/i18n/ui';
+import { siteContact } from '@/data/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = contactContent[locale].channels;
+
+const phoneHref = siteContact.phone ? `tel:${siteContact.phone.replace(/\s/g, '')}` : '';
+
+function channelMeta(channel: 'email' | 'phone' | 'whatsapp') {
+  switch (channel) {
+    case 'email':
+      return {
+        icon: 'email' as const,
+        href: siteContact.email ? `mailto:${siteContact.email}` : '',
+        value: siteContact.email,
+        external: false,
+      };
+    case 'phone':
+      return {
+        icon: 'phone' as const,
+        href: phoneHref,
+        value: siteContact.phone,
+        external: false,
+      };
+    case 'whatsapp':
+      return {
+        icon: 'whatsapp' as const,
+        href: siteContact.whatsappUrl,
+        value: 'WhatsApp',
+        external: true,
+      };
+  }
+}
+---
+
+<SectionLayout background="default" spacing="lg">
+  <Container size="md">
+    <div class="channels__head reveal">
+      <h2 class="channels__title">{t.title}</h2>
+    </div>
+
+    <div class="channels">
+      {
+        t.items.map((item) => {
+          const meta = channelMeta(item.channel);
+          if (!meta.href) return null;
+          return (
+            <div class="channel reveal">
+              <span class="channel__icon">
+                <Icon name={meta.icon} size={28} />
+              </span>
+              <h3 class="channel__label">{item.label}</h3>
+              <p class="channel__description">{item.description}</p>
+              <a
+                class="channel__action"
+                href={meta.href}
+                target={meta.external ? '_blank' : undefined}
+                rel={meta.external ? 'noopener' : undefined}
+              >
+                {item.channel === 'whatsapp' || item.channel === 'email' ? item.actionLabel : meta.value}
+                <Icon name="arrow-right" size={16} />
+              </a>
+            </div>
+          );
+        })
+      }
+    </div>
+
+    <p class="channels__note reveal">{t.note}</p>
+  </Container>
+</SectionLayout>
+
+<style>
+  .channels__head {
+    text-align: center;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .channels__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 800;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  .channels {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-6);
+  }
+
+  @media (min-width: 768px) {
+    .channels {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-8);
+    }
+  }
+
+  .channel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+    padding: var(--spacing-8) var(--spacing-6);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+  }
+
+  .channel:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-accent-deep);
+  }
+
+  .channel__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: var(--color-brand-050);
+    color: var(--color-brand);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .channel__label {
+    font-family: var(--font-heading);
+    font-size: var(--text-h4);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+
+  .channel__description {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--color-ink-700);
+    flex-grow: 1;
+    text-wrap: pretty;
+  }
+
+  .channel__action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-brand);
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  .channel__action:hover,
+  .channel__action:focus-visible {
+    text-decoration: underline;
+  }
+
+  .channels__note {
+    margin-top: var(--spacing-12);
+    text-align: center;
+    font-size: var(--text-small);
+    color: var(--color-ink-500);
+    max-width: 520px;
+    margin-inline: auto;
+    line-height: 1.6;
+  }
+</style>

@@ -1,0 +1,87 @@
+---
+// src/components/pages/ProjectsPage.astro
+// `/proyectos` (es) + `/en/projects` (en): galería de trabajos con
+// placeholders visuales (imágenes de referencia, no trabajos reales).
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeroImage from '@/components/sections/PageHeroImage.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import GalleryGrid from '@/components/sections/GalleryGrid.astro';
+import { projectsContent } from '@/i18n/content';
+import { routePaths, localePath, ui, type Locale } from '@/i18n/ui';
+import { getSiteUrl, breadcrumbSchema } from '@/lib/seo';
+import projectsHero from '@/assets/images/projects-hero-placeholder.webp';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = projectsContent[locale];
+
+const canonical = getSiteUrl(routePaths.projects[locale]);
+const hreflang = {
+  es: getSiteUrl(routePaths.projects.es),
+  en: getSiteUrl(routePaths.projects.en),
+};
+
+const breadcrumbs = [
+  { label: ui[locale].nav.home, url: localePath('home', locale) },
+  { label: ui[locale].nav.projects },
+];
+---
+
+<BaseLayout
+  title={t.title}
+  description={t.description}
+  locale={locale}
+  routeKey="projects"
+  canonical={canonical}
+  hreflang={hreflang}
+  jsonLd={breadcrumbSchema(breadcrumbs)}
+>
+  <PageHeroImage
+    title={t.hero.heading}
+    description={t.hero.subheading}
+    image={projectsHero}
+    breadcrumbs={breadcrumbs}
+  />
+
+  <SectionLayout background="default" spacing="lg">
+    <Container size="lg">
+      <div class="gallery-head reveal">
+        <h2 class="gallery-head__title">{t.gallery.title}</h2>
+      </div>
+
+      <GalleryGrid items={t.gallery.items} columns={t.gallery.items.length >= 3 ? 3 : 2} />
+
+      <p class="gallery-note reveal">{t.gallery.note}</p>
+    </Container>
+  </SectionLayout>
+</BaseLayout>
+
+<style>
+  .gallery-head {
+    text-align: center;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .gallery-head__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 800;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  .gallery-note {
+    margin-top: var(--spacing-10);
+    text-align: center;
+    font-size: var(--text-small);
+    color: var(--color-ink-500);
+    max-width: 560px;
+    margin-inline: auto;
+    line-height: 1.6;
+  }
+</style>

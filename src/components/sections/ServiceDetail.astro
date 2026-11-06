@@ -1,0 +1,167 @@
+---
+// src/components/sections/ServiceDetail.astro
+// Página de servicios: detalle de cada especialidad con lista de features.
+// Ancla navegable (#id) usada por nav/footer.
+
+import Container from '@/components/ui/Container.astro';
+import Icon from '@/components/ui/Icon.astro';
+import type { ServiceDetail as ServiceDetailData } from '@/i18n/content';
+
+interface Props {
+  detail: ServiceDetailData;
+  index: number;
+}
+
+const { detail, index } = Astro.props;
+const paddedNumber = String(index + 1).padStart(2, '0');
+---
+
+<section id={detail.id} class:list={['sdetail', index % 2 === 1 && 'sdetail--alt']}>
+  <Container size="lg">
+    <div class="sdetail__grid">
+      <div class="sdetail__intro reveal">
+        <span class="sdetail__number" aria-hidden="true">{paddedNumber}</span>
+        <span class="sdetail__icon">
+          <Icon name={detail.icon} size={36} />
+        </span>
+      </div>
+
+      <div class="sdetail__body reveal-up">
+        <h2 class="sdetail__title">{detail.title}</h2>
+        <p class="sdetail__description">{detail.description}</p>
+
+        <ul class="sdetail__features">
+          {
+            detail.features.map((feature) => (
+              <li class="sdetail__feature">
+                <Icon name="check" size={18} />
+                {feature}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .sdetail {
+    padding-block: var(--spacing-20);
+    scroll-margin-top: 96px;
+    background-color: var(--color-surface);
+  }
+
+  .sdetail--alt {
+    background-color: var(--color-surface-alt);
+  }
+
+  .sdetail__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+  }
+
+  @media (min-width: 1024px) {
+    .sdetail__grid {
+      grid-template-columns: 280px 1fr;
+      gap: var(--spacing-16);
+      align-items: start;
+    }
+  }
+
+  .sdetail__intro {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-6);
+  }
+
+  @media (min-width: 1024px) {
+    .sdetail__intro {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-8);
+      position: sticky;
+      top: 96px;
+    }
+  }
+
+  .sdetail__number {
+    font-family: var(--font-heading);
+    font-size: clamp(3.5rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1;
+    /* QA Fase 1 (contraste WCAG): `--color-accent` #D4A574 sobre surface
+       (#FAF6F1 / #F1E8DC) da 2.07:1 y 1.84:1 — por debajo de 3:1 aunque el
+       numeral sea texto grande. `--color-brand` es theme-aware y pasa AA en
+       ambos temas (5.43 / 4.82 en claro, 7.24 en oscuro). */
+    color: var(--color-brand);
+  }
+
+  .sdetail__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.5rem;
+    height: 4.5rem;
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+    border-radius: var(--radius-md);
+  }
+
+  .sdetail__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 800;
+    color: var(--color-ink);
+    margin-bottom: var(--spacing-4);
+    text-wrap: balance;
+  }
+
+  .sdetail__description {
+    font-size: var(--text-lead);
+    line-height: 1.7;
+    color: var(--color-ink-700);
+    margin-bottom: var(--spacing-8);
+    max-width: 720px;
+    text-wrap: pretty;
+  }
+
+  .sdetail__features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 640px) {
+    .sdetail__features {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--spacing-4) var(--spacing-8);
+    }
+  }
+
+  .sdetail__feature {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    font-size: var(--text-body);
+    font-weight: 500;
+    color: var(--color-ink);
+    padding: var(--spacing-3) var(--spacing-4);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+  }
+
+  .sdetail--alt .sdetail__feature {
+    background-color: var(--color-surface);
+  }
+
+  .sdetail__feature :global(.icon) {
+    color: var(--color-brand);
+    flex-shrink: 0;
+  }
+</style>

@@ -1,0 +1,68 @@
+---
+// src/components/seo/MetaTags.astro
+import type { MetaTagsProps } from '@/types/seo';
+
+export interface OgVideo {
+  url: string;
+  type?: string;
+  width?: number;
+  height?: number;
+  secureUrl?: string;
+}
+
+export interface Props extends MetaTagsProps {
+  ogVideo?: OgVideo;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  robots = 'index, follow, max-image-preview:large',
+  ogImage,
+  ogType = 'website',
+  twitterCard = 'summary_large_image',
+  hreflang,
+  noindex = false,
+  ogVideo,
+} = Astro.props;
+
+const finalRobots = noindex ? 'noindex, follow' : robots;
+const ogImageUrl = ogImage ?? new URL('/og-default.jpg', canonical).toString();
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="robots" content={finalRobots} />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:site_name" content="Astro Template" />
+
+{ogVideo && (
+  <>
+    <meta property="og:video" content={ogVideo.url} />
+    <meta property="og:video:type" content={ogVideo.type ?? 'video/mp4'} />
+    <meta property="og:video:width" content={String(ogVideo.width ?? 1920)} />
+    <meta property="og:video:height" content={String(ogVideo.height ?? 1080)} />
+    {ogVideo.secureUrl && <meta property="og:video:secure_url" content={ogVideo.secureUrl} />}
+  </>
+)}
+
+<meta name="twitter:card" content={twitterCard} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageUrl} />
+
+{
+  hreflang &&
+    Object.entries(hreflang).map(([lang, url]) => (
+      <link rel="alternate" hreflang={lang} href={url} />
+    ))
+}
+
+<link rel="alternate" hreflang="x-default" href={canonical} />

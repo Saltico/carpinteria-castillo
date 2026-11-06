@@ -1,0 +1,21 @@
+/* src/styles/fonts.css */
+/* Self-hosted variable fonts (latin subset) served from /public/fonts/. */
+/* Preloaded in BaseLayout.astro <head>. */
+
+/* Inter — variable 100-900 (cuerpo) */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/inter-var-latin.woff2') format('woff2');
+}
+
+/* Playfair Display — variable 400-900 (titulares) */
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 900;
+  src: url('/fonts/playfair-display-var-latin.woff2') format('woff2');
+}

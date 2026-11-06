@@ -1,0 +1,130 @@
+---
+// src/components/ui/Button.astro
+// Reusable button component with variants
+
+export interface Props {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  type?: 'button' | 'submit' | 'reset';
+  href?: string;
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  href,
+  class: className,
+} = Astro.props;
+
+const variantClasses = {
+  primary: 'btn--primary',
+  secondary: 'btn--secondary',
+  outline: 'btn--outline',
+  ghost: 'btn--ghost',
+};
+
+const sizeClasses = {
+  sm: 'btn--sm',
+  md: 'btn--md',
+  lg: 'btn--lg',
+};
+
+const variantClass = variantClasses[variant];
+const sizeClass = sizeClasses[size];
+---
+
+{href ? (
+  <a href={href} class:list={['btn', variantClass, sizeClass, className]}>
+    <slot />
+  </a>
+) : (
+  <button type={type} class:list={['btn', variantClass, sizeClass, className]}>
+    <slot />
+  </button>
+)}
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    font-family: var(--font-body);
+    font-weight: 600;
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out);
+    white-space: nowrap;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  /* Sizes */
+  .btn--sm {
+    font-size: var(--text-small);
+    padding: 0.625rem 1.25rem;
+  }
+
+  .btn--md {
+    font-size: var(--text-body);
+    padding: 0.875rem 1.75rem;
+  }
+
+  .btn--lg {
+    font-size: var(--text-lead);
+    padding: 1rem 2rem;
+  }
+
+  /* Variants */
+  .btn--primary {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  .btn--primary:hover {
+    background-color: var(--color-brand-700);
+  }
+
+  .btn--secondary {
+    background-color: var(--color-graphite);
+    color: var(--color-on-dark);
+  }
+
+  .btn--secondary:hover {
+    background-color: var(--color-graphite-2);
+  }
+
+  .btn--outline {
+    background-color: transparent;
+    border-color: var(--color-brand);
+    color: var(--color-brand);
+  }
+
+  .btn--outline:hover {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  .btn--ghost {
+    background-color: transparent;
+    color: var(--color-ink);
+  }
+
+  .btn--ghost:hover {
+    background-color: var(--color-surface-alt);
+  }
+
+  :root[data-theme='dark'] .btn--ghost {
+    color: var(--color-on-dark);
+  }
+</style>

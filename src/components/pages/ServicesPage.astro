@@ -1,0 +1,53 @@
+---
+// src/components/pages/ServicesPage.astro
+// `/servicios` (es) + `/en/services` (en): tres especialidades en detalle.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeroImage from '@/components/sections/PageHeroImage.astro';
+import ServiceDetail from '@/components/sections/ServiceDetail.astro';
+import { servicesContent } from '@/i18n/content';
+import { routePaths, localePath, ui, type Locale } from '@/i18n/ui';
+import { getSiteUrl, breadcrumbSchema } from '@/lib/seo';
+import servicesHero from '@/assets/images/services-hero-placeholder.webp';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = servicesContent[locale];
+
+const canonical = getSiteUrl(routePaths.services[locale]);
+const hreflang = {
+  es: getSiteUrl(routePaths.services.es),
+  en: getSiteUrl(routePaths.services.en),
+};
+
+const breadcrumbs = [
+  { label: ui[locale].nav.home, url: localePath('home', locale) },
+  { label: ui[locale].nav.services },
+];
+---
+
+<BaseLayout
+  title={t.title}
+  description={t.description}
+  locale={locale}
+  routeKey="services"
+  canonical={canonical}
+  hreflang={hreflang}
+  jsonLd={breadcrumbSchema(breadcrumbs)}
+>
+  <PageHeroImage
+    title={t.hero.heading}
+    description={t.hero.subheading}
+    image={servicesHero}
+    breadcrumbs={breadcrumbs}
+  />
+
+  {
+    t.details.map((detail, index) => (
+      <ServiceDetail detail={detail} index={index} />
+    ))
+  }
+</BaseLayout>

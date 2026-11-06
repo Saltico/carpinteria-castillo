@@ -1,0 +1,460 @@
+---
+// src/components/layout/Navigation.astro
+// Main navigation with mobile drawer using <dialog> (POC pattern).
+// Desktop: horizontal list with hover submenus.
+// Mobile: hamburger toggle opens a modal drawer from the right.
+
+import type { NavItem } from '@/types/navigation';
+
+export interface Props {
+  items: NavItem[];
+  ariaLabel?: string;
+  variant?: 'default' | 'brand';
+  menuTitle?: string;
+  openMenuLabel?: string;
+  closeMenuLabel?: string;
+}
+
+const {
+  items,
+  ariaLabel = 'Main navigation',
+  variant = 'default',
+  menuTitle = 'Menu',
+  openMenuLabel = 'Open menu',
+  closeMenuLabel = 'Close menu',
+} = Astro.props;
+
+const activePath = Astro.url.pathname;
+const navClassList = ['nav', variant === 'brand' && 'nav--brand'];
+
+function isActive(item: NavItem): boolean {
+  if (item.url === activePath) return true;
+  if (activePath.startsWith(item.url + '/') && item.url !== '/') return true;
+  if (item.children?.some((child) => child.url === activePath)) return true;
+  return false;
+}
+---
+
+<nav class:list={navClassList} aria-label={ariaLabel}>
+  <button
+    type="button"
+    class="nav__toggle"
+    aria-expanded="false"
+    aria-controls="nav-dialog"
+    aria-label={openMenuLabel}
+  >
+    <span class="nav__hamburger" aria-hidden="true"></span>
+    <span class="sr-only">{menuTitle}</span>
+  </button>
+
+  <ul class="nav__list nav__list--desktop">
+    {
+      items.map((item) => (
+        <li class:list={['nav__item', item.children && 'nav__item--has-children', isActive(item) && 'is-active']}>
+          <a href={item.url} class="nav__link" aria-current={isActive(item) ? 'page' : undefined}>
+            {item.label}
+            {item.children && (
+              <svg class="nav__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            )}
+          </a>
+          {item.children && (
+            <ul class="nav__submenu">
+              {item.children.map((child) => (
+                <li class="nav__subitem">
+                  <a href={child.url} class="nav__sublink" aria-current={child.url === activePath ? 'page' : undefined}>
+                    {child.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+
+  <dialog id="nav-dialog" class="nav__dialog" aria-label={ariaLabel}>
+    <div class="nav__dialog-header">
+      <span class="nav__dialog-title">{menuTitle}</span>
+      <div class="nav__dialog-actions">
+        <slot name="mobile-actions" />
+        <button type="button" class="nav__close" aria-label={closeMenuLabel}>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+
+    <ul class="nav__list nav__list--mobile">
+      {
+        items.map((item) => (
+          <li class="nav__mobile-item">
+            <a href={item.url} class="nav__mobile-link" aria-current={isActive(item) ? 'page' : undefined}>
+              {item.label}
+            </a>
+            {item.children && (
+              <ul class="nav__mobile-submenu">
+                {item.children.map((child) => (
+                  <li>
+                    <a href={child.url} class="nav__mobile-sublink" aria-current={child.url === activePath ? 'page' : undefined}>
+                      {child.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </dialog>
+</nav>
+
+<script>
+  (function () {
+    const toggle = document.querySelector('.nav__toggle');
+    const dialog = document.getElementById('nav-dialog') as HTMLDialogElement | null;
+    const closeBtn = document.querySelector('.nav__close');
+
+    if (!toggle || !dialog) return;
+
+    const openMenu = () => {
+      dialog.showModal();
+      toggle.setAttribute('aria-expanded', 'true');
+    };
+
+    const closeMenu = () => {
+      dialog.close();
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.focus();
+    };
+
+    toggle.addEventListener('click', openMenu);
+    closeBtn?.addEventListener('click', closeMenu);
+
+    // Close when clicking the backdrop
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) {
+        closeMenu();
+      }
+    });
+
+    dialog.addEventListener('close', () => {
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+
+    // Close on Escape is native to <dialog>
+  })();
+</script>
+
+<style>
+  .nav {
+    display: flex;
+    align-items: center;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── Hamburger toggle (mobile only) ── */
+  .nav__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
+  }
+
+  .nav__toggle:hover,
+  .nav__toggle:focus-visible {
+    background-color: var(--color-surface-alt);
+    border-color: var(--color-ink-500);
+  }
+
+  @media (min-width: 1024px) {
+    .nav__toggle {
+      display: none;
+    }
+  }
+
+  .nav__hamburger {
+    position: relative;
+    display: block;
+    width: 1.25rem;
+    height: 2px;
+    background-color: currentColor;
+  }
+
+  .nav__hamburger::before,
+  .nav__hamburger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: currentColor;
+  }
+
+  .nav__hamburger::before {
+    top: -6px;
+  }
+
+  .nav__hamburger::after {
+    top: 6px;
+  }
+
+  /* ── Desktop list ── */
+  .nav__list--desktop {
+    display: none;
+    align-items: center;
+    gap: var(--spacing-6);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .nav__list--desktop {
+      display: flex;
+    }
+  }
+
+  .nav__item {
+    position: relative;
+  }
+
+  .nav__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-3) var(--spacing-2);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-ink-700);
+    text-decoration: none;
+    transition: color 0.2s var(--ease-out);
+    border-bottom: 2px solid transparent;
+  }
+
+  @media (min-width: 1280px) {
+    .nav__link {
+      font-size: 0.9375rem;
+    }
+  }
+
+  .nav__link:hover,
+  .nav__link:focus,
+  .nav__item.is-active > .nav__link {
+    color: var(--color-brand);
+    border-bottom-color: var(--color-brand);
+  }
+
+  .nav__caret {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .nav__item--has-children:hover > .nav__link .nav__caret,
+  .nav__item--has-children:focus-within > .nav__link .nav__caret {
+    transform: rotate(180deg);
+  }
+
+  /* ── Desktop submenu ── */
+  .nav__submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 220px;
+    padding: var(--spacing-3);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.2s var(--ease-out),
+      visibility 0.2s var(--ease-out),
+      transform 0.2s var(--ease-out);
+    z-index: 100;
+    list-style: none;
+    margin: 0;
+  }
+
+  .nav__item--has-children:hover > .nav__submenu,
+  .nav__item--has-children:focus-within > .nav__submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .nav__sublink {
+    display: block;
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-ink-700);
+    text-decoration: none;
+    transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
+  }
+
+  .nav__sublink:hover,
+  .nav__sublink:focus,
+  .nav__sublink[aria-current='page'] {
+    background-color: var(--color-surface-alt);
+    color: var(--color-brand);
+  }
+
+  /* ── Mobile drawer (<dialog>) ── */
+  .nav__dialog {
+    width: min(85vw, 320px);
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    margin-left: auto;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+  }
+
+  .nav__dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .nav__dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .nav__dialog-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.125rem;
+  }
+
+  .nav__dialog-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  /* ThemeToggle inside the mobile drawer adapts to the light/dark surface */
+  .nav__dialog-actions :global([data-theme-toggle]) {
+    color: var(--color-ink);
+    border-color: var(--color-line);
+  }
+
+  .nav__dialog-actions :global([data-theme-toggle]:hover) {
+    background: var(--color-surface-alt);
+    border-color: var(--color-ink-500);
+  }
+
+  .nav__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--color-ink);
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
+  }
+
+  .nav__close:hover {
+    background-color: var(--color-surface-alt);
+    border-color: var(--color-ink-500);
+  }
+
+  .nav__list--mobile {
+    padding: var(--spacing-4);
+    list-style: none;
+    margin: 0;
+  }
+
+  .nav__mobile-item {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .nav__mobile-link {
+    display: block;
+    padding: var(--spacing-4) 0;
+    font-weight: 600;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .nav__mobile-link[aria-current='page'] {
+    color: var(--color-brand);
+  }
+
+  .nav__mobile-submenu {
+    padding-left: var(--spacing-4);
+    padding-bottom: var(--spacing-4);
+    list-style: none;
+    margin: 0;
+  }
+
+  .nav__mobile-sublink {
+    display: block;
+    padding: var(--spacing-2) 0;
+    color: var(--color-ink-700);
+    text-decoration: none;
+  }
+
+  .nav__mobile-sublink[aria-current='page'] {
+    color: var(--color-brand);
+  }
+
+  /* ── Brand variant (colored header) ── */
+  .nav--brand .nav__toggle {
+    color: var(--color-on-brand);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .nav--brand .nav__toggle:hover,
+  .nav--brand .nav__toggle:focus {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .nav--brand .nav__link {
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .nav--brand .nav__link:hover,
+  .nav--brand .nav__link:focus,
+  .nav--brand .nav__item.is-active > .nav__link {
+    color: var(--color-on-brand);
+    border-bottom-color: var(--color-on-brand);
+  }
+</style>

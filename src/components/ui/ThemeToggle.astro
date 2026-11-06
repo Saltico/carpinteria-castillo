@@ -1,0 +1,123 @@
+---
+// src/components/ui/ThemeToggle.astro
+// Light/dark theme switcher with localStorage persistence
+// Handles multiple instances (header + mobile drawer) in sync
+
+export interface Props {
+  toLightLabel?: string;
+  toDarkLabel?: string;
+}
+
+const {
+  toLightLabel = 'Switch to light mode',
+  toDarkLabel = 'Switch to dark mode',
+} = Astro.props;
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  aria-label={toDarkLabel}
+  data-theme-toggle
+  data-label-light={toLightLabel}
+  data-label-dark={toDarkLabel}
+>
+  <span class="theme-toggle__icon" data-theme-icon="dark" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+  </span>
+  <span class="theme-toggle__icon" data-theme-icon="light" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </span>
+</button>
+
+<script>
+  // Theme toggle logic — syncs all instances
+  (function () {
+    if (typeof window === 'undefined') return;
+
+    const STORAGE_KEY = 'theme-preference';
+    const toggles = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
+    if (toggles.length === 0) return;
+
+    function getCurrentTheme(): 'dark' | 'light' {
+      const t = document.documentElement.getAttribute('data-theme');
+      return t === 'light' ? 'light' : 'dark';
+    }
+
+    function syncUI(theme: 'dark' | 'light'): void {
+      toggles.forEach((toggle) => {
+        const toLight = toggle.dataset.labelLight || 'Switch to light mode';
+        const toDark = toggle.dataset.labelDark || 'Switch to dark mode';
+        toggle.setAttribute('aria-label', theme === 'dark' ? toLight : toDark);
+        toggle.querySelectorAll<HTMLElement>('[data-theme-icon]').forEach((icon) => {
+          const iconTheme = icon.getAttribute('data-theme-icon');
+          icon.hidden = iconTheme !== theme;
+        });
+      });
+    }
+
+    toggles.forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        const current = getCurrentTheme();
+        const next = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem(STORAGE_KEY, next);
+        document.documentElement.setAttribute('data-theme', next);
+        syncUI(next);
+      });
+    });
+
+    syncUI(getCurrentTheme());
+
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+      if (!localStorage.getItem(STORAGE_KEY)) {
+        const next = e.matches ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        syncUI(next);
+      }
+    });
+  })();
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    color: var(--color-ink);
+    transition: all 0.2s var(--ease-out);
+  }
+
+  .theme-toggle:hover {
+    background-color: var(--color-surface-alt);
+    border-color: var(--color-ink-500);
+  }
+
+  .theme-toggle__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .theme-toggle__icon[hidden] {
+    display: none;
+  }
+</style>

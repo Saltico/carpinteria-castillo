@@ -1,0 +1,260 @@
+---
+// src/components/layout/Footer.astro
+// Site footer with columns, legal links, and social
+
+import type { FooterProps } from '@/types/layout';
+import Icon from '@/components/ui/Icon.astro';
+import { iconMap, type IconName } from '@/lib/icons';
+
+export interface Props extends FooterProps {
+  contactTitle?: string;
+  copyrightText?: string;
+  /** URL de inicio del locale activo (qa i18n: el logo no debe salir al home ES desde /en/*). */
+  homeUrl?: string;
+  /** Texto del aria-label del logo (localized: 'Inicio' / 'Home'). */
+  homeLabel?: string;
+}
+
+const {
+  columns,
+  legal,
+  brand,
+  description,
+  phone,
+  email,
+  address,
+  schedule,
+  social = [],
+  logoUrl,
+  logoAlt = brand,
+  siteUrl,
+  contactTitle = 'Contact',
+  copyrightText = 'All rights reserved.',
+  homeUrl = '/',
+  homeLabel = 'Home',
+} = Astro.props;
+
+const year = new Date().getFullYear();
+
+const socialIcons: Partial<Record<NonNullable<FooterProps['social']>[number]['platform'], IconName>> = {
+  whatsapp: 'whatsapp',
+  linkedin: 'arrow-right',
+  github: 'arrow-right',
+  instagram: 'arrow-right',
+  facebook: 'arrow-right',
+  twitter: 'arrow-right',
+};
+---
+
+<footer class="footer" role="contentinfo">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      {logoUrl && (
+        <a href={homeUrl} class="footer__logo-link" aria-label={`${brand} - ${homeLabel}`}>
+          <img src={logoUrl} alt={logoAlt} class="footer__logo" width="120" height="40" />
+        </a>
+      )}
+      {description && <p class="footer__description">{description}</p>}
+      {social.length > 0 && (
+        <div class="footer__social">
+          {social.map((s) => (
+            <a href={s.url} class="footer__social-link" aria-label={s.label ?? s.platform} target="_blank" rel="noopener">
+              {socialIcons[s.platform] && iconMap[socialIcons[s.platform] as IconName] ? (
+                <Icon name={socialIcons[s.platform] as IconName} size={20} class="footer__social-icon" />
+              ) : (
+                s.platform
+              )}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {columns.map((column) => (
+      <div class="footer__column">
+        <h3 class="footer__column-title">{column.title}</h3>
+        <ul class="footer__links">
+          {column.links.map((link) => (
+            <li>
+              <a href={link.url} class="footer__link">{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+
+    <div class="footer__contact">
+      <h3 class="footer__column-title">{contactTitle}</h3>
+      <ul class="footer__contact-list">
+        {phone && <li><a href={`tel:${phone.replace(/\s/g, '')}`} class="footer__link">{phone}</a></li>}
+        {email && <li><a href={`mailto:${email}`} class="footer__link">{email}</a></li>}
+        {address && <li class="footer__text">{address}</li>}
+        {schedule && <li class="footer__text">{schedule}</li>}
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer__bottom">
+    <div class="footer__bottom-inner">
+      <p class="footer__copyright">
+        © {year} {brand}. {copyrightText}
+      </p>
+      <ul class="footer__legal">
+        {legal.map((link) => (
+          <li>
+            <a href={link.url} class="footer__link footer__link--small">{link.label}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background-color: var(--color-graphite);
+    color: var(--color-on-dark);
+    padding-top: var(--spacing-16);
+    font-family: var(--font-body);
+  }
+
+  .footer__inner {
+    max-width: var(--breakpoint-xl);
+    margin-inline: auto;
+    padding-inline: var(--spacing-4);
+    padding-bottom: var(--spacing-12);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+  }
+
+  @media (min-width: 768px) {
+    .footer__inner {
+      padding-inline: var(--spacing-8);
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    }
+  }
+
+  .footer__brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  .footer__logo-link {
+    display: inline-block;
+    line-height: 0;
+  }
+
+  .footer__logo {
+    width: auto;
+    height: 2.5rem;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  .footer__description {
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--color-on-dark-muted);
+    margin: 0;
+  }
+
+  .footer__social {
+    display: flex;
+    gap: var(--spacing-3);
+  }
+
+  .footer__social-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-on-dark-muted);
+    text-decoration: none;
+    transition: color 0.2s var(--ease-out);
+  }
+
+  .footer__social-link:hover {
+    color: var(--color-on-dark);
+  }
+
+  .footer__social-link :global(.icon) {
+    display: inline-flex;
+  }
+
+  .footer__column-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-body);
+    font-weight: 600;
+    margin-bottom: var(--spacing-4);
+    color: var(--color-on-dark);
+  }
+
+  .footer__links,
+  .footer__contact-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+
+  .footer__link {
+    color: var(--color-on-dark-muted);
+    text-decoration: none;
+    font-size: var(--text-small);
+    transition: color 0.2s var(--ease-out);
+  }
+
+  .footer__link:hover {
+    color: var(--color-on-dark);
+  }
+
+  .footer__text {
+    font-size: var(--text-small);
+    color: var(--color-on-dark-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .footer__bottom {
+    border-top: 1px solid var(--color-line-dark);
+    padding: var(--spacing-6) 0;
+  }
+
+  .footer__bottom-inner {
+    max-width: var(--breakpoint-xl);
+    margin-inline: auto;
+    padding-inline: var(--spacing-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .footer__bottom-inner {
+      padding-inline: var(--spacing-8);
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  .footer__copyright {
+    font-size: var(--text-small);
+    color: var(--color-on-dark-muted);
+    margin: 0;
+  }
+
+  .footer__legal {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--spacing-4);
+  }
+
+  .footer__link--small {
+    font-size: 0.75rem;
+  }
+</style>

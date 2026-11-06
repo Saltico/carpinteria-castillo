@@ -1,0 +1,108 @@
+---
+// src/components/seo/Breadcrumbs.astro
+// Componente PURAMENTE VISUAL (nav accesible de breadcrumbs).
+// El JSON-LD BreadcrumbList NO se emite aquí (el estándar exige TODO
+// JSON-LD en <head>): se genera con breadcrumbSchema() de @/lib/seo y se
+// inyecta en head vía prop `jsonLd` de BaseLayout → SEO.astro (INMUTABLE).
+import type { BreadcrumbsProps } from '@/types/seo';
+
+export interface Props extends BreadcrumbsProps {
+  variant?: 'default' | 'hero';
+}
+
+const { items, variant = 'default' } = Astro.props;
+
+const variantClass = variant === 'hero' ? 'breadcrumbs--hero' : '';
+---
+
+<nav aria-label="Breadcrumb" class:list={['breadcrumbs', variantClass]}>
+  <ol class="breadcrumbs__list">
+    {
+      items.map((item, index) => (
+        <li class="breadcrumbs__item">
+          {item.url && index < items.length - 1 ? (
+            <a href={item.url} class="breadcrumbs__link">
+              {item.label}
+            </a>
+          ) : (
+            <span class="breadcrumbs__current" aria-current="page">
+              {item.label}
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    margin-bottom: var(--spacing-6);
+  }
+
+  .breadcrumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--text-small);
+    color: var(--color-ink-500);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .breadcrumbs__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  .breadcrumbs__item:not(:last-child)::after {
+    content: '/';
+    color: var(--color-line);
+  }
+
+  .breadcrumbs__link {
+    color: var(--color-ink-700);
+    text-decoration: none;
+    transition: color 0.2s var(--ease-out);
+  }
+
+  .breadcrumbs__link:hover,
+  .breadcrumbs__link:focus {
+    color: var(--color-brand);
+  }
+
+  .breadcrumbs__current {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
+  /* Hero variant (for use over background images) */
+  .breadcrumbs--hero {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .breadcrumbs--hero .breadcrumbs__list {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .breadcrumbs--hero .breadcrumbs__item:not(:last-child)::after {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .breadcrumbs--hero .breadcrumbs__link {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .breadcrumbs--hero .breadcrumbs__link:hover,
+  .breadcrumbs--hero .breadcrumbs__link:focus {
+    color: var(--color-on-dark);
+  }
+
+  .breadcrumbs--hero .breadcrumbs__current {
+    color: rgba(255, 255, 255, 0.95);
+  }
+</style>

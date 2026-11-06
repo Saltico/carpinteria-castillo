@@ -1,0 +1,40 @@
+---
+// src/components/pages/HomePage.astro
+// Landing `/` (es) + `/en/` (en): resume servicios, proyectos y contacto.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import HomeHero from '@/components/sections/HomeHero.astro';
+import ServicesPreview from '@/components/sections/ServicesPreview.astro';
+import ProjectsPreview from '@/components/sections/ProjectsPreview.astro';
+import ContactCta from '@/components/sections/ContactCta.astro';
+import { homeContent } from '@/i18n/content';
+import { routePaths, type Locale } from '@/i18n/ui';
+import { getSiteUrl } from '@/lib/seo';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = homeContent[locale];
+
+const canonical = getSiteUrl(routePaths.home[locale]);
+const hreflang = {
+  es: getSiteUrl(routePaths.home.es),
+  en: getSiteUrl(routePaths.home.en),
+};
+---
+
+<BaseLayout
+  title={t.title}
+  description={t.description}
+  locale={locale}
+  routeKey="home"
+  canonical={canonical}
+  hreflang={hreflang}
+>
+  <HomeHero locale={locale} />
+  <ServicesPreview locale={locale} />
+  <ProjectsPreview locale={locale} />
+  <ContactCta locale={locale} />
+</BaseLayout>

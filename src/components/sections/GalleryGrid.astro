@@ -1,0 +1,132 @@
+---
+// src/components/sections/GalleryGrid.astro
+// Grid de galería compartido (home preview + página de proyectos).
+// Imágenes placeholder optimizadas (.webp vía astro:assets); el cliente
+// las reemplazará por fotografías reales.
+
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import type { GalleryItem } from '@/i18n/content';
+
+import closet from '@/assets/images/project-placeholder-closet.webp';
+import doorOak from '@/assets/images/project-placeholder-door-oak.webp';
+import table from '@/assets/images/project-placeholder-table.webp';
+import chair from '@/assets/images/project-placeholder-chair.webp';
+import bookcase from '@/assets/images/project-placeholder-bookcase.webp';
+import entryDoor from '@/assets/images/project-placeholder-entry-door.webp';
+
+const images: Record<GalleryItem['image'], ImageMetadata> = {
+  closet,
+  'door-oak': doorOak,
+  table,
+  chair,
+  bookcase,
+  'entry-door': entryDoor,
+};
+
+interface Props {
+  items: GalleryItem[];
+  columns?: 2 | 3;
+}
+
+const { items, columns = 3 } = Astro.props;
+---
+
+<div class:list={['gallery', `gallery--${columns}`]}>
+  {
+    items.map((item) => (
+      <figure class="gallery__card reveal">
+        <Image
+          src={images[item.image]}
+          alt={item.title}
+          widths={[360, 540, 720, 900]}
+          sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 92vw"
+          class="gallery__img"
+          loading="lazy"
+          decoding="async"
+        />
+        <figcaption class="gallery__caption">
+          <span class="gallery__category">{item.category}</span>
+          <span class="gallery__title">{item.title}</span>
+        </figcaption>
+      </figure>
+    ))
+  }
+</div>
+
+<style>
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-6);
+  }
+
+  @media (min-width: 640px) {
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .gallery--3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .gallery--2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .gallery__card {
+    position: relative;
+    margin: 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background-color: var(--color-surface-alt);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+  }
+
+  .gallery__card:hover,
+  .gallery__card:focus-within {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .gallery__img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .gallery__caption {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-1);
+    padding: var(--spacing-12) var(--spacing-4) var(--spacing-4);
+    background: linear-gradient(to top, rgba(44, 24, 16, 0.85), rgba(44, 24, 16, 0));
+  }
+
+  .gallery__category {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #2c1810;
+    background-color: var(--color-accent);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .gallery__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-body);
+    font-weight: 700;
+    color: var(--color-on-dark);
+  }
+</style>

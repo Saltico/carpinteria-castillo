@@ -1,0 +1,59 @@
+---
+// src/components/ui/Container.astro
+// Max-width container with consistent padding
+
+export interface Props {
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  class?: string;
+}
+
+const { size = 'xl', class: className } = Astro.props;
+
+const sizeClasses = {
+  sm: 'container--sm',
+  md: 'container--md',
+  lg: 'container--lg',
+  xl: 'container--xl',
+  full: 'container--full',
+};
+
+const sizeClass = sizeClasses[size];
+---
+
+<div class:list={['container', sizeClass, className]}>
+  <slot />
+</div>
+
+<style>
+  .container {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--spacing-4);
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      padding-inline: var(--spacing-8);
+    }
+  }
+
+  .container--sm {
+    max-width: 640px;
+  }
+
+  .container--md {
+    max-width: 768px;
+  }
+
+  .container--lg {
+    max-width: 1024px;
+  }
+
+  .container--xl {
+    max-width: var(--breakpoint-xl);
+  }
+
+  .container--full {
+    max-width: none;
+  }
+</style>

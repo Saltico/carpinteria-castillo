@@ -1,0 +1,134 @@
+---
+// src/components/layout/TopBar.astro
+// Utility top bar with contact info and social links
+
+import type { SocialLink } from '@/types/layout';
+import Icon from '@/components/ui/Icon.astro';
+import { iconMap, type IconName } from '@/lib/icons';
+
+export interface Props {
+  phone?: string;
+  email?: string;
+  social?: SocialLink[];
+  links?: Array<{ label: string; url: string }>;
+}
+
+const { phone, email, social = [], links = [] } = Astro.props;
+
+const socialIcons: Partial<Record<SocialLink['platform'], IconName>> = {
+  whatsapp: 'whatsapp',
+  linkedin: 'arrow-right',
+  github: 'arrow-right',
+  instagram: 'arrow-right',
+  facebook: 'arrow-right',
+  twitter: 'arrow-right',
+};
+---
+
+<div class="topbar" data-topbar>
+  <div class="topbar__inner">
+    <div class="topbar__contact">
+      {phone && <a href={`tel:${phone.replace(/\s/g, '')}`} class="topbar__link">{phone}</a>}
+      {email && <a href={`mailto:${email}`} class="topbar__link">{email}</a>}
+    </div>
+    <div class="topbar__actions">
+      {links.map((link) => (
+        <a href={link.url} class="topbar__link topbar__link--external">
+          {link.label}
+        </a>
+      ))}
+      {social.length > 0 && (
+        <div class="topbar__social">
+          {social.map((s) => (
+            <a href={s.url} class="topbar__social-link" aria-label={s.label ?? s.platform} target="_blank" rel="noopener">
+              {socialIcons[s.platform] && iconMap[socialIcons[s.platform] as IconName] ? (
+                <Icon name={socialIcons[s.platform] as IconName} size={16} class="topbar__social-icon" />
+              ) : (
+                s.platform
+              )}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</div>
+
+<style>
+  .topbar {
+    background-color: var(--color-graphite);
+    color: var(--color-on-dark);
+    font-size: var(--text-small);
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .topbar__inner {
+    max-width: var(--breakpoint-xl);
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--spacing-4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-4);
+  }
+
+  @media (min-width: 768px) {
+    .topbar__inner {
+      padding-inline: var(--spacing-8);
+    }
+  }
+
+  .topbar__contact,
+  .topbar__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+  }
+
+  .topbar__link {
+    color: var(--color-on-dark-muted);
+    text-decoration: none;
+    transition: color 0.2s var(--ease-out);
+  }
+
+  .topbar__link:hover {
+    color: var(--color-on-dark);
+  }
+
+  .topbar__link--external::after {
+    content: ' ↗';
+    font-size: 0.75em;
+  }
+
+  .topbar__social {
+    display: flex;
+    gap: var(--spacing-3);
+  }
+
+  .topbar__social-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-on-dark-muted);
+    text-decoration: none;
+    transition: color 0.2s var(--ease-out);
+  }
+
+  .topbar__social-link:hover {
+    color: var(--color-on-dark);
+  }
+
+  .topbar__social-link :global(.icon) {
+    display: inline-flex;
+  }
+
+  /* Hide topbar on mobile for cleaner header */
+  @media (max-width: 767px) {
+    .topbar {
+      display: none;
+    }
+  }
+</style>

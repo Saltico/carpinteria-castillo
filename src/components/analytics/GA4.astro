@@ -1,0 +1,23 @@
+---
+// src/components/analytics/GA4.astro
+// Google Analytics 4 snippet — solo se renderiza si PUBLIC_GA4_ID está configurado
+// Respeta Consent Mode: el snippet se carga pero gtag() espera consentimiento.
+
+export interface Props {
+  ga4Id: string;
+}
+
+const { ga4Id } = Astro.props;
+---
+
+<!-- Google Analytics 4 -->
+<script define:vars={{ ga4Id }} is:inline>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', ga4Id, {
+    anonymize_ip: true,
+    send_page_view: true,
+  });
+</script>
+<script is:inline src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`} async />

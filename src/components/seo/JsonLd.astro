@@ -1,0 +1,11 @@
+---
+// src/components/seo/JsonLd.astro
+import type { JsonLdProps } from '@/types/seo';
+
+export interface Props extends JsonLdProps {}
+
+const { data } = Astro.props;
+const json = JSON.stringify(data, null, 0);
+---
+
+<script type="application/ld+json" set:html={json} />

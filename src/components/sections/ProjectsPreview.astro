@@ -1,0 +1,52 @@
+---
+// src/components/sections/ProjectsPreview.astro
+// Home: grid de proyectos recientes + CTA a la galería completa.
+
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import Button from '@/components/ui/Button.astro';
+import GalleryGrid from '@/components/sections/GalleryGrid.astro';
+import { homeContent, projectsContent } from '@/i18n/content';
+import { localePath, type Locale } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = homeContent[locale].projectsPreview;
+const galleryItems = projectsContent[locale].gallery.items;
+---
+
+<SectionLayout background="alt" spacing="lg">
+  <Container size="lg">
+    <div class="section-head reveal">
+      <h2 class="section-head__title">{t.title}</h2>
+      <Button variant="outline" href={localePath(t.cta.routeKey, locale)}>
+        {t.cta.label}
+      </Button>
+    </div>
+
+    <GalleryGrid items={galleryItems} columns={3} />
+  </Container>
+</SectionLayout>
+
+<style>
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-8);
+  }
+
+  .section-head__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 800;
+    color: var(--color-ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+</style>

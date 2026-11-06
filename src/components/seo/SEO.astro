@@ -1,0 +1,85 @@
+---
+// src/components/seo/SEO.astro
+// INMUTABLE: Este es el punto de integración estándar entre el harness y la plantilla.
+// El Builder pasa props desde site-spec.json; este componente genera todos los meta tags.
+// NO modificar la lógica de este componente sin actualizar el template-contract.md del harness.
+//
+// DESVIACIÓN AUTORIZADA (ciclo QA 2/2, hallazgo S-1, 2026-11-05): el Project
+// Orchestrator autorizó un cambio localizado en ESTE proyecto — x-default
+// apunta a la versión del locale por defecto (hreflang[defaultLocale], el
+// equivalente ES) en vez del canonical propio, para que las páginas /en/*
+// declaren su equivalente ES como x-default. La plantilla del harness NO se
+// modifica; el fix upstream corresponde al maintainer del template repo.
+
+import JsonLd from './JsonLd.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  ogImage?: string;
+  ogType?: string;
+  twitterCard?: 'summary_large_image' | 'summary';
+  hreflang?: Record<string, string>;
+  /** Locale por defecto del sitio (fallback 'es'): su URL en `hreflang`
+   *  es la que se declara como x-default (hallazgo S-1). */
+  defaultLocale?: string;
+  noindex?: boolean;
+  robots?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  lang?: string;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage,
+  ogType = 'website',
+  twitterCard = 'summary_large_image',
+  hreflang,
+  defaultLocale = 'es',
+  noindex = false,
+  robots = 'index, follow, max-image-preview:large',
+  jsonLd,
+  lang = 'es',
+} = Astro.props;
+
+const finalRobots = noindex ? 'noindex, follow' : robots;
+const ogImageUrl = ogImage ?? new URL('/og-default.jpg', canonical).toString();
+const allSchemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+
+// S-1 (QA 2/2): x-default apunta a la versión del locale por defecto
+// (equivalente ES), no al canonical de la página actual. Fallback a canonical
+// cuando no hay mapa hreflang (p.ej. 404) o falta la entrada del locale.
+const xDefaultUrl = hreflang?.[defaultLocale] ?? canonical;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="robots" content={finalRobots} />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImageUrl} />
+
+<meta name="twitter:card" content={twitterCard} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageUrl} />
+
+{
+  hreflang &&
+    Object.entries(hreflang).map(([locale, url]) => (
+      <link rel="alternate" hreflang={locale} href={url} />
+    ))
+}
+
+<link rel="alternate" hreflang="x-default" href={xDefaultUrl} />
+
+{allSchemas.map((schema) => (
+  <JsonLd data={schema} />
+))}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="48" viewBox="0 0 300 48" role="img" aria-label="Carpintería Castillo">
+  <!-- Badge -->
+  <rect x="2" y="4" width="40" height="40" rx="9" fill="#8B5A2B"/>
+  <!-- C letterform -->
+  <path d="M 30.43 16.93 A 11 11 0 1 0 30.43 31.07" fill="none" stroke="#FAF6F1" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- Wood-grain accent -->
+  <path d="M 12.47 18.5 Q 11 24 12.47 29.5" fill="none" stroke="#D4A574" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- Wordmark (light, para superficies oscuras) -->
+  <text x="54" y="31.5" font-family="Georgia, 'Times New Roman', serif" font-size="19" font-weight="700" letter-spacing="0.2">
+    <tspan fill="#FAF6F1">Carpintería</tspan>
+    <tspan fill="#D4A574" dx="4">Castillo</tspan>
+  </text>
+</svg>

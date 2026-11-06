@@ -1,0 +1,50 @@
+---
+// src/components/pages/ContactPage.astro
+// `/contacto` (es) + `/en/contact` (en): canales de contacto públicos.
+// Sin formulario (features.has_contact_form = false) y sin mapa (map = false).
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeroImage from '@/components/sections/PageHeroImage.astro';
+import ContactChannels from '@/components/sections/ContactChannels.astro';
+import { contactContent } from '@/i18n/content';
+import { routePaths, localePath, ui, type Locale } from '@/i18n/ui';
+import { getSiteUrl, breadcrumbSchema } from '@/lib/seo';
+import contactHero from '@/assets/images/contact-hero-placeholder.webp';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = contactContent[locale];
+
+const canonical = getSiteUrl(routePaths.contact[locale]);
+const hreflang = {
+  es: getSiteUrl(routePaths.contact.es),
+  en: getSiteUrl(routePaths.contact.en),
+};
+
+const breadcrumbs = [
+  { label: ui[locale].nav.home, url: localePath('home', locale) },
+  { label: ui[locale].nav.contact },
+];
+---
+
+<BaseLayout
+  title={t.title}
+  description={t.description}
+  locale={locale}
+  routeKey="contact"
+  canonical={canonical}
+  hreflang={hreflang}
+  jsonLd={breadcrumbSchema(breadcrumbs)}
+>
+  <PageHeroImage
+    title={t.hero.heading}
+    description={t.hero.subheading}
+    image={contactHero}
+    breadcrumbs={breadcrumbs}
+  />
+
+  <ContactChannels locale={locale} />
+</BaseLayout>

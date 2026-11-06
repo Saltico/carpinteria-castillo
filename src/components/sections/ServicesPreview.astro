@@ -1,0 +1,135 @@
+---
+// src/components/sections/ServicesPreview.astro
+// Home: tarjetas de los tres servicios (site-spec.json → services-preview).
+
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { homeContent } from '@/i18n/content';
+import { localePath, type Locale } from '@/i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = homeContent[locale].servicesPreview;
+---
+
+<SectionLayout background="default" spacing="lg">
+  <Container size="lg">
+    <div class="section-head reveal">
+      <h2 class="section-head__title">{t.title}</h2>
+    </div>
+
+    <div class="cards">
+      {
+        t.items.map((item) => (
+          <a class="card reveal" href={localePath('services', locale, item.hash)}>
+            <span class="card__icon">
+              <Icon name={item.icon} size={32} />
+            </span>
+            <h3 class="card__title">{item.title}</h3>
+            <p class="card__description">{item.description}</p>
+            <span class="card__more">
+              {t.moreLabel}
+              <Icon name="arrow-right" size={16} />
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </Container>
+</SectionLayout>
+
+<style>
+  .section-head {
+    text-align: center;
+    margin-bottom: var(--spacing-12);
+  }
+
+  .section-head__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 800;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-6);
+  }
+
+  @media (min-width: 768px) {
+    .cards {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-8);
+    }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-4);
+    padding: var(--spacing-8) var(--spacing-6);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    text-decoration: none;
+    transition:
+      transform 0.25s var(--ease-out),
+      box-shadow 0.25s var(--ease-out),
+      border-color 0.25s var(--ease-out);
+  }
+
+  .card:hover,
+  .card:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-accent-deep);
+  }
+
+  .card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    background-color: var(--color-brand-050);
+    color: var(--color-brand);
+    border-radius: var(--radius-md);
+    transition: background-color 0.25s var(--ease-out), color 0.25s var(--ease-out);
+  }
+
+  .card:hover .card__icon,
+  .card:focus-visible .card__icon {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  .card__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h4);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+
+  .card__description {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--color-ink-700);
+    flex-grow: 1;
+  }
+
+  .card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-brand);
+  }
+</style>
